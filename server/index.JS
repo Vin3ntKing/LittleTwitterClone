@@ -3,6 +3,7 @@ var express = require("express");
 var cors = require("cors");
 var morgan = require("morgan");
 var monk = require("monk");
+var filter = require("bad-words")
 
 var app = express();
 
@@ -37,14 +38,15 @@ app.get("/", (req, res) => {
 app.get("/tweet", (req, res) => {
   tweets.find().then((allTweets) => {
     res.json(allTweets);
+    
   });
 });
 
 app.post("/tweet", (req, res) => {
   if (isValidTweet(req.body)) {
     const tweet = {
-      name: req.body.name.toString(),
-      content: req.body.content.toString(),
+      name: filter.clean(req.body.name.toString()),
+      content: filter.clean(req.body.content.toString()),
       created: new Date(),
     };
 
